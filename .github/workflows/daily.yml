@@ -35,6 +35,6 @@ jobs:
           CHAT_ID: ${{ secrets.CHAT_ID }}
           TEXT: ${{ steps.msg.outputs.text }}
         run: |
-          curl -G "https://api.telegram.org/bot$TOKEN/sendMessage" \
+          curl -G "https://api.telegram.org/bot$7933158417:AAEIS06I_HEayv2qeWbsVKKagBUL5ZmRUnc/sendMessage" \
                --data-urlencode "chat_id=$CHAT_ID" \
                --data-urlencode "text=$TEXT"
