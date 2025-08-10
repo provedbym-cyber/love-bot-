@@ -1,0 +1,17 @@
+name: Reminder House 2
+on:
+  schedule:
+    - cron: '0 15 * * 1,4'  # пн, чт в 17:00 Berlin (15:00 UTC)
+  workflow_dispatch:
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to Telegram
+        env:
+          TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        run: |
+          curl -sS -G "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+               --data-urlencode chat_id=474964009 \
+               --data-urlencode "text=Напоминание по Дому 2 🏡: сегодня проверка дома №2. Отметь статус и приложи фото." \
+               --fail
