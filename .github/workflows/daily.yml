@@ -2,7 +2,7 @@ name: Daily Love Message
 
 on:
   schedule:
-    - cron: '5 5 * * *'   # 07:05 по Берлину летом (GitHub в UTC)
+    - cron: '5 5 * * *'   # 07:05 по Берлину летом (GitHub = UTC)
   workflow_dispatch:
 
 jobs:
@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Pick message
         id: msg
+        shell: bash
         run: |
           msgs=(
             "Доброе утро, любовь моя 🌸"
@@ -26,15 +27,20 @@ jobs:
             "Я верю в тебя безусловно 🌠"
             "Мир становится мягче, когда ты улыбаешься 🌹"
           )
-          msg=${msgs[$RANDOM % ${#msgs[@]}]}
-          echo "text=$msg" >> $GITHUB_OUTPUT
+          echo "text=${msgs[$RANDOM % ${#msgs[@]}]}" >> "$GITHUB_OUTPUT"
 
-      - name: Send to Telegram
+      - name: Send to Telegram (simple, like on laptop)
+        shell: bash
         env:
-          TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
+          TOKEN: ${{ secrets.TELEGRAM_TOKEN }}   # секрет без кавычек/пробелов!
+          CHAT_ID: "474964009"                   # твой id числом
           TEXT: ${{ steps.msg.outputs.text }}
         run: |
-          curl -G "https://api.telegram.org/bot7933158417:AAEIS06I_HEayv2qeWbsVKKagBUL5ZmRUnc/sendMessage" \
-               --data-urlencode "chat_id=CHAT_ID" \
-               --data-urlencode "text=$TEXT"
+          set -e
+          # мини-проверка, что токен реально подставился
+          if [ -z "$TOKEN" ]; then echo "TOKEN is empty"; exit 1; fi
+          URL="https://api.telegram.org/bot${TOKEN}/sendMessage"
+          curl -sS -G "$URL" \
+               --data-urlencode chat_id=$CHAT_ID \
+               --data-urlencode "text=$TEXT" \
+               --fail
