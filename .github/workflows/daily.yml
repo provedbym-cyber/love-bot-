@@ -11,7 +11,6 @@ jobs:
     steps:
       - name: Pick message
         id: msg
-        shell: bash
         run: |
           msgs=(
             "Доброе утро, любовь моя 🌸"
@@ -28,16 +27,14 @@ jobs:
             "Мир становится мягче, когда ты улыбаешься 🌹"
           )
           msg=${msgs[$RANDOM % ${#msgs[@]}]}
-          echo "text=$msg" >> "$GITHUB_OUTPUT"
+          echo "text=$msg" >> $GITHUB_OUTPUT
 
       - name: Send to Telegram
-        # chat_id Name: 474964009
         env:
           TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
           TEXT: ${{ steps.msg.outputs.text }}
         run: |
-          set -e
-          curl -sS -G "https://api.telegram.org/bot$TOKEN/sendMessage" \
-            --data-urlencode "chat_id=474964009" \
-            --data-urlencode "text=$TEXT" \
-            --fail
+          curl -G "https://api.telegram.org/bot$7933158417:AAEIS06I_HEayv2qeWbsVKKagBUL5ZmRUnc/sendMessage" \
+               --data-urlencode "chat_id=$CHAT_ID" \
+               --data-urlencode "text=$TEXT"
